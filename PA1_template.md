@@ -181,7 +181,7 @@ histogram2 <- ggplot(steps_per_date2) +
 print(histogram2)
 ```
 
-![](PA1_template_files/figure-html/fill missing histogram-1.png)<!-- -->
+![](PA1_template_files/figure-html/fill_missing_histogram-1.png)<!-- -->
 The artificial insertion of mean values in place of NAs has had a noticeable
 impact on the histogram, as the mean is now overrepresented in the set and 
 "pushes" up the central histogram bar. In other words: all NA days are now
@@ -224,7 +224,7 @@ timeseries_W <- ggplot(steps_per_interval_W) +
 print(timeseries_W)
 ```
 
-![](PA1_template_files/figure-html/timeseries weekdays-1.png)<!-- -->
+![](PA1_template_files/figure-html/timeseries_weekdays-1.png)<!-- -->
 
 The two most obvious differences between weekdays and weekends are:
 

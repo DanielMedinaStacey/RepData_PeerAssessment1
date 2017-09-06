@@ -41,7 +41,7 @@ The first step is to sum the number of steps taken per day (i.e. date), taking
 no special action on NAs. We then calculate the mean and median number of steps
 per day.
 
-```{r total steps}
+```{r total_steps}
 steps_per_date <- aggregate(steps ~ date,
                             data = activity,
                             FUN = sum)
@@ -82,7 +82,7 @@ We first generate a data frame of the mean number of steps per interval in a
 similar way as earlier. We also determine the 5-minute interval which, on 
 average, contains the maximum number of steps.
 
-```{r steps per interval}
+```{r steps_per_interval}
 steps_per_interval <- aggregate(steps ~ interval,
                                 data = activity,
                                 FUN = mean)
@@ -126,7 +126,7 @@ We will fill these values in with the mean number for each given interval and
 assign the result to a new dataset. We will also label NA intervals so as to 
 keep track of days where all intervals were NAs.
 
-```{r new dataset}
+```{r new_dataset}
 mean_of_interval <- function(Interval){
     
                mean(activity$steps[activity$interval==Interval], na.rm=TRUE)
@@ -141,7 +141,7 @@ activity2$was_NA <- steps_NA
 
 We sum the number of steps taken per day as before.
 
-```{r new total steps}
+```{r new_total_steps}
 steps_per_date2 <- aggregate(steps ~ date,
                              data = activity2,
                              FUN=sum)
@@ -160,7 +160,7 @@ However, **the median is now** also `r sprintf("%.2f",median_steps2)` rather
 than the previous `r median_steps`. This is unsurprising as every day that was 
 previously NA has been filled in with the mean, reinforcing its central tendency
 and establishing it as the median value of the set.
-```{r fill missing histogram}
+```{r fill_missing_histogram}
 
 
 num_days2 <- nrow(steps_per_date2)
@@ -204,7 +204,7 @@ steps_per_interval_W <- aggregate(steps ~ interval * type,
                                   FUN = mean)
 ```
 And now we plot the data:
-```{r timeseries weekdays}
+```{r timeseries_weekdays}
 timeseries_W <- ggplot(steps_per_interval_W) + 
               aes(x=interval,y=steps) + 
               geom_line() +

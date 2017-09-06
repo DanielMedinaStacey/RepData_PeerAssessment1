@@ -1,11 +1,6 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-author: "Daniel Medina Stacey"
-date: "5 September 2017"
-output: 
-    html_document:
-        keep_md: true
----
+# Reproducible Research: Peer Assessment 1
+Daniel Medina Stacey  
+5 September 2017  
 
 
 ## Loading and preprocessing the data
@@ -19,7 +14,8 @@ treated as a `Date` object rather than as a factor.
 
 3. Load the data into the `activity` data frame.
 
-```{r load}
+
+```r
 if(!file.exists("activity.csv")){
     
     if(!file.exists("activity.zip")){
@@ -41,7 +37,8 @@ The first step is to sum the number of steps taken per day (i.e. date), taking
 no special action on NAs. We then calculate the mean and median number of steps
 per day.
 
-```{r total steps}
+
+```r
 steps_per_date <- aggregate(steps ~ date,
                             data = activity,
                             FUN = sum)
@@ -53,16 +50,17 @@ median_steps <- median(steps_per_date$total_steps)
 num_days <- nrow(steps_per_date)
 ```
 
-The **mean** number of steps per day is `r sprintf("%.2f",mean_steps)`. The 
-**median** number of steps per day is `r median_steps`. The number of days used 
-in the calculation is `r num_days` rather than the complete 
-`r length(unique(activity$date))` days in the dataset, as days where all steps 
+The **mean** number of steps per day is 10766.19. The 
+**median** number of steps per day is 10765. The number of days used 
+in the calculation is 53 rather than the complete 
+61 days in the dataset, as days where all steps 
 are NA are ignored by `aggregate()`.
 
 We plot a histogram of the total steps per day. Due to the number of days to be 
 plotted, the number of bins is set to 10 rather than the default 30.
 
-```{r histogram}
+
+```r
 library(ggplot2)
 
 title <- paste(num_days,"days binned by total steps - NAs ignored")
@@ -73,8 +71,9 @@ histogram <- ggplot(steps_per_date) +
              xlab("Total steps")+
              ylab("Number of days")
 print(histogram)
-
 ```
+
+![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
 
 ## What is the average daily activity pattern?
 
@@ -82,7 +81,8 @@ We first generate a data frame of the mean number of steps per interval in a
 similar way as earlier. We also determine the 5-minute interval which, on 
 average, contains the maximum number of steps.
 
-```{r steps per interval}
+
+```r
 steps_per_interval <- aggregate(steps ~ interval,
                                 data = activity,
                                 FUN = mean)
@@ -95,12 +95,13 @@ interval_max <- steps_per_interval$Interval[index_max]
 ```
 
 The **5-minute interval with the highest average number of steps** is the 
-`r index_max`th interval, which corresponds to minute `r interval_max`. The 
-average number of steps in this interval is `r sprintf("%.2f",max_steps)`.
+104th interval, which corresponds to minute 835. The 
+average number of steps in this interval is 206.17.
 
 Now we plot the timeseries.
 
-```{r timeseries}
+
+```r
 timeseries <- ggplot(steps_per_interval) + 
               aes(x=Interval,y=mean_steps) + 
               geom_line() +
@@ -108,25 +109,28 @@ timeseries <- ggplot(steps_per_interval) +
               xlab("5-minute interval") +
               ylab("Mean number of steps")
 print(timeseries)
-
 ```
+
+![](PA1_template_files/figure-html/timeseries-1.png)<!-- -->
 
 
 ## Imputing missing values
 
 We calculate and report the number of missing values in the dataset.
-```{r missing}
+
+```r
 steps_NA <- is.na(activity$steps)
 count_steps_NA = sum(steps_NA)
 ```
 
-The **number of missing values** in the dataset is `r count_steps_NA`. 
+The **number of missing values** in the dataset is 2304. 
 
 We will fill these values in with the mean number for each given interval and 
 assign the result to a new dataset. We will also label NA intervals so as to 
 keep track of days where all intervals were NAs.
 
-```{r new dataset}
+
+```r
 mean_of_interval <- function(Interval){
     
                mean(activity$steps[activity$interval==Interval], na.rm=TRUE)
@@ -141,7 +145,8 @@ activity2$was_NA <- steps_NA
 
 We sum the number of steps taken per day as before.
 
-```{r new total steps}
+
+```r
 steps_per_date2 <- aggregate(steps ~ date,
                              data = activity2,
                              FUN=sum)
@@ -154,15 +159,14 @@ mean_steps2 <- mean(steps_per_date2$total_steps)
 median_steps2 <- median(steps_per_date2$total_steps)
 ```
 The **mean of the steps in the new dataset** with NAs artificially replaced with
-the mean for their given interval is `r sprintf("%.2f",mean_steps2)`, unchanged 
+the mean for their given interval is 10766.19, unchanged 
 from before. 
-However, **the median is now** also `r sprintf("%.2f",median_steps2)` rather 
-than the previous `r median_steps`. This is unsurprising as every day that was 
+However, **the median is now** also 10766.19 rather 
+than the previous 10765. This is unsurprising as every day that was 
 previously NA has been filled in with the mean, reinforcing its central tendency
 and establishing it as the median value of the set.
-```{r fill missing histogram}
 
-
+```r
 num_days2 <- nrow(steps_per_date2)
 title2 <- paste(num_days2,"days binned by total steps - NAs replaced with mean")
 histogram2 <- ggplot(steps_per_date2) +
@@ -176,6 +180,8 @@ histogram2 <- ggplot(steps_per_date2) +
              ylab("Number of days")
 print(histogram2)
 ```
+
+![](PA1_template_files/figure-html/fill missing histogram-1.png)<!-- -->
 The artificial insertion of mean values in place of NAs has had a noticeable
 impact on the histogram, as the mean is now overrepresented in the set and 
 "pushes" up the central histogram bar. In other words: all NA days are now
@@ -187,7 +193,8 @@ We now search for patterns in activity by weekday using the dataset with the
 filled-in values as suggested by the assignment -- though this is likely to bias
 the estimates. First we determine the weekday of each date and assign it as 
 either a weekday or a weekend day:
-```{r weekdays}
+
+```r
 activity2$weekday <- weekdays(activity2$date, abbreviate = TRUE)
 day_type <- c("Mon"="Weekday",
               "Tue"="Weekday",
@@ -204,7 +211,8 @@ steps_per_interval_W <- aggregate(steps ~ interval * type,
                                   FUN = mean)
 ```
 And now we plot the data:
-```{r timeseries weekdays}
+
+```r
 timeseries_W <- ggplot(steps_per_interval_W) + 
               aes(x=interval,y=steps) + 
               geom_line() +
@@ -215,6 +223,8 @@ timeseries_W <- ggplot(steps_per_interval_W) +
               facet_grid(facets=type~.,switch = "y")
 print(timeseries_W)
 ```
+
+![](PA1_template_files/figure-html/timeseries weekdays-1.png)<!-- -->
 
 The two most obvious differences between weekdays and weekends are:
 
